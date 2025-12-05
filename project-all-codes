@@ -1,0 +1,960 @@
+ubuntu@ip-172-31-84-79:~$ pwd
+/home/ubuntu
+ubuntu@ip-172-31-84-79:~$
+ubuntu@ip-172-31-84-79:~$ ls -al
+total 80
+drwxr-x--- 7 ubuntu ubuntu  4096 Dec  4 18:45 .
+drwxr-xr-x 3 root   root    4096 Nov 29 09:10 ..
+-rw------- 1 ubuntu ubuntu  4171 Dec  5 18:09 .bash_history
+-rw-r--r-- 1 ubuntu ubuntu   220 Mar 31  2024 .bash_logout
+-rw-rw-r-- 1 ubuntu ubuntu   200 Nov 29 09:44 .bash_profile
+-rw-r--r-- 1 ubuntu ubuntu  3771 Mar 31  2024 .bashrc
+drwx------ 2 ubuntu ubuntu  4096 Nov 29 09:11 .cache
+drwx------ 3 ubuntu ubuntu  4096 Nov 29 09:19 .config
+drwx------ 3 ubuntu ubuntu  4096 Dec  2 11:50 .docker
+drwxrwxr-x 3 ubuntu ubuntu  4096 Dec  2 11:33 .local
+-rw-r--r-- 1 ubuntu ubuntu   807 Mar 31  2024 .profile
+drwx------ 2 ubuntu ubuntu  4096 Nov 29 09:10 .ssh
+-rw-r--r-- 1 ubuntu ubuntu     0 Nov 29 09:12 .sudo_as_admin_successful
+-rw------- 1 ubuntu ubuntu   824 Nov 29 09:44 .viminfo
+-rw-rw-r-- 1 ubuntu ubuntu 21013 Dec  2 09:20 install-docker.sh
+ubuntu@ip-172-31-84-79:~$
+ubuntu@ip-172-31-84-79:~$ sudo su jenkins
+jenkins@ip-172-31-84-79:/home/ubuntu$
+jenkins@ip-172-31-84-79:/home/ubuntu$ cd /var/lib/jenkins/workspace
+jenkins@ip-172-31-84-79:~/workspace$
+jenkins@ip-172-31-84-79:~/workspace$ ped
+Command 'ped' not found, but there are 16 similar ones.
+jenkins@ip-172-31-84-79:~/workspace$ pwd
+/var/lib/jenkins/workspace
+jenkins@ip-172-31-84-79:~/workspace$
+jenkins@ip-172-31-84-79:~/workspace$ ls -al
+total 16
+drwxr-xr-x  4 jenkins jenkins 4096 Dec  2 09:39 .
+drwxr-xr-x 18 jenkins jenkins 4096 Dec  5 18:09 ..
+drwxr-xr-x  4 jenkins jenkins 4096 Nov 29 11:39 MY-MAVEN-PROJECT
+drwxr-xr-x  5 jenkins jenkins 4096 Dec  3 18:21 NUEL-BANK-APP
+jenkins@ip-172-31-84-79:~/workspace$
+jenkins@ip-172-31-84-79:~/workspace$ cd NUEL-BANK-APP/
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$ pwd
+/var/lib/jenkins/workspace/NUEL-BANK-APP
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$ ls -al
+total 28
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:21 .
+drwxr-xr-x 4 jenkins jenkins 4096 Dec  2 09:39 ..
+drwxr-xr-x 8 jenkins jenkins 4096 Dec  2 11:19 .git
+-rw-r--r-- 1 jenkins jenkins   11 Dec  2 09:39 README.md
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 backend
+-rw-rw-r-- 1 jenkins jenkins 1028 Dec  3 18:21 docker-compose.yml
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 jenkins
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$ cat docker-compose.yml
+version: '3.8'
+
+services:
+
+  backend:
+    build: ./backend
+    container_name: nuel_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://admin:adminpassword@mongo:27017/nuelbank?authSource=admin
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6.0
+    container_name: nuel_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:1.0.0
+    container_name: nuel_mongo_express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: adminpassword
+      ME_CONFIG_BASICAUTH_USERNAME: nuel
+      ME_CONFIG_BASICAUTH_PASSWORD: bank123
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP$ cd backend/
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ pwd
+/var/lib/jenkins/workspace/NUEL-BANK-APP/backend
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ ls -al
+total 48
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:21 ..
+-rw-rw-r-- 1 jenkins jenkins  155 Dec  3 04:24 Dockerfile
+-rw-rw-r-- 1 jenkins jenkins 3442 Dec  3 18:19 app.py
+-rw-r--r-- 1 jenkins jenkins  147 Dec  2 09:39 config.py
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 infra
+-rw-r--r-- 1 jenkins jenkins  373 Dec  2 09:39 models.py
+-rw-r--r-- 1 jenkins jenkins   14 Dec  2 10:42 requirements.txt
+-rw-r--r-- 1 jenkins jenkins 1691 Dec  2 09:39 routes.py
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 static
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  4 18:51 templates
+-rw-r--r-- 1 jenkins jenkins  660 Dec  2 09:39 utils.py
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cat Dockerfile
+FROM python:3.9
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cat app.py
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from pymongo import MongoClient
+import os
+
+app = Flask(__name__)
+app.secret_key = "nuelbankkey"
+
+# Mongo connection
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://admin:adminpassword@mongo:27017/")
+client = MongoClient(MONGO_URI)
+
+# Database name: nuel_bank
+db = client['nuel_bank']
+users = db['users']
+
+
+# ---------------- HOME ----------------
+@app.route('/')
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+
+# ---------------- ABOUT ----------------
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
+# ---------------- SERVICES ----------------
+@app.route('/services')
+def services():
+    return render_template('services.html')
+
+
+# ---------------- REGISTER ----------------
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name  = request.form.get('last_name')
+        email      = request.form.get('email')
+        mobile     = request.form.get('mobile')
+        address    = request.form.get('address')
+        password   = request.form.get('password')
+
+        if users.find_one({"email": email}):
+            flash("User already exists!")
+            return redirect(url_for('register'))
+
+        users.insert_one({
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "mobile": mobile,
+            "address": address,
+            "password": password,
+            "status": "Active Customer"
+        })
+
+        flash("Registration successful! Please login.")
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
+
+
+# ---------------- LOGIN ----------------
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = users.find_one({"email": email, "password": password})
+
+        if user:
+            # Save all data in session
+            session['first_name'] = user.get('first_name')
+            session['last_name'] = user.get('last_name')
+            session['email'] = user.get('email')
+            session['mobile'] = user.get('mobile')
+            session['address'] = user.get('address')
+            session['status'] = user.get('status')
+
+            return redirect(url_for('profile'))
+
+        else:
+            flash("Invalid credentials!")
+            return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+
+# ---------------- PROFILE ----------------
+@app.route('/profile')
+def profile():
+
+    if 'email' not in session:
+        return redirect(url_for('login'))
+
+    user_data = {
+        "first_name": session.get('first_name'),
+        "last_name": session.get('last_name'),
+        "email": session.get('email'),
+        "mobile": session.get('mobile'),
+        "address": session.get('address'),
+        "status": session.get('status')
+    }
+
+    return render_template('profile.html', user=user_data)
+
+
+# ---------------- LOGOUT ----------------
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("Logged out successfully!")
+    return redirect(url_for('login'))
+
+
+# ---------------- MAIN ----------------
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cat config.py
+import os
+
+
+MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/nuel_db')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'change-this')
+
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cat models.py
+from pymongo import MongoClient
+from config import MONGO_URI
+
+
+client = MongoClient(MONGO_URI)
+db = client.get_default_database()
+
+
+users = db.users
+
+
+# helper functions
+
+
+def create_user(user):
+return users.insert_one(user).inserted_id
+
+
+def find_user_by_email(email):
+return users.find_one({'email': email})
+
+
+def get_user_by_id(uid):
+return users.find_one({'_id': uid})
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cat requirements.txt
+flask
+pymongo
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cat routes.py
+from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
+from models import users, create_user, find_user_by_email
+from utils import hash_password, verify_password
+from bson.objectid import ObjectId
+
+
+bp = Blueprint('bp', _name_)
+
+
+@bp.route('/')
+def home():
+return render_template('home.html')
+
+
+@bp.route('/services')
+def services():
+return render_template('services.html')
+
+
+@bp.route('/about')
+def about():
+return render_template('about.html')
+
+
+@bp.route('/profile')
+def profile():
+user_id = session.get('user_id')
+if not user_id:
+return redirect(url_for('bp.home'))
+user = users.find_one({'_id': ObjectId(user_id)})
+return render_template('profile.html', user=user)
+
+
+# Auth APIs
+@bp.route('/api/register', methods=['POST'])
+def api_register():
+data = request.json or request.form
+if find_user_by_email(data.get('email')):
+return jsonify({'error': 'User exists'}), 400
+user = {
+'name': data.get('name'),
+'email': data.get('email'),
+'password': hash_password(data.get('password')),
+'balance': 0,
+'created_at': None,
+}
+res = users.insert_one(user)
+session['user_id'] = str(res.inserted_id)
+return jsonify({'ok': True, 'id': str(res.inserted_id)})
+
+
+@bp.route('/api/login', methods=['POST'])
+def api_login():
+data = request.json or request.form
+user = find_user_by_email(data.get('email'))
+if not user:
+return jsonify({'error': 'Invalid credentials'}), 401
+if not verify_password(user['password'], data.get('password')):
+return jsonify({'error': 'Invalid credentials'}), 401
+session['user_id'] = str(user['_id'])
+return jsonify({'ok': True})
+
+
+@bp.route('/api/logout')
+def api_logout():
+session.pop('user_id', None)
+return redirect(url_for('bp.home'))
+
+
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cat utils.py
+from pymongo import MongoClient
+from config import MONGO_URI
+
+
+client = MongoClient(MONGO_URI)
+db = client.get_default_database()
+
+
+users = db.users
+
+
+# helper functions
+
+
+def create_user(user):
+return users.insert_one(user).inserted_id
+
+
+def find_user_by_email(email):
+return users.find_one({'email': email})
+
+
+def get_user_by_id(uid):
+return users.find_one({'_id': uid})
+backend/models.py
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+
+
+def hash_password(password: str) -> str:
+return generate_password_hash(password)
+
+
+
+
+def verify_password(hash_pw: str, password: str) -> bool:
+return check_password_hash(hash_pw, password)
+
+
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ ls -al
+total 48
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:21 ..
+-rw-rw-r-- 1 jenkins jenkins  155 Dec  3 04:24 Dockerfile
+-rw-rw-r-- 1 jenkins jenkins 3442 Dec  3 18:19 app.py
+-rw-r--r-- 1 jenkins jenkins  147 Dec  2 09:39 config.py
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 infra
+-rw-r--r-- 1 jenkins jenkins  373 Dec  2 09:39 models.py
+-rw-r--r-- 1 jenkins jenkins   14 Dec  2 10:42 requirements.txt
+-rw-r--r-- 1 jenkins jenkins 1691 Dec  2 09:39 routes.py
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 static
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  4 18:51 templates
+-rw-r--r-- 1 jenkins jenkins  660 Dec  2 09:39 utils.py
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cd templates/
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ pwd
+/var/lib/jenkins/workspace/NUEL-BANK-APP/backend/templates
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ ls -al
+total 36
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  4 18:51 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 ..
+-rw-rw-r-- 1 jenkins jenkins  357 Dec  3 04:49 about.html
+-rw-rw-r-- 1 jenkins jenkins 1786 Dec  4 18:51 base.html
+-rw-rw-r-- 1 jenkins jenkins  343 Dec  3 04:47 home.html
+-rw-rw-r-- 1 jenkins jenkins 1929 Dec  3 05:26 login.html
+-rw-rw-r-- 1 jenkins jenkins 1662 Dec  3 17:55 profile.html
+-rw-rw-r-- 1 jenkins jenkins 1467 Dec  3 17:54 register.html
+-rw-rw-r-- 1 jenkins jenkins  247 Dec  3 04:51 services.html
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ cat about.html
+{% extends "base.html" %}
+{% block content %}
+
+<h2>About NUEL Bank</h2>
+<p>
+NUEL Bank is a modern digital banking platform designed to provide
+safe, simple and fast banking solutions for customers.
+</p>
+
+<p>
+This application is built using:
+<ul>
+    <li>Python Flask</li>
+    <li>MongoDB</li>
+    <li>Docker</li>
+    <li>AWS</li>
+</ul>
+</p>
+
+{% endblock %}
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ cat base.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NUEL Bank</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f6ff;
+        }
+
+        header {
+            background: #ffffff;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #1e3c72;
+        }
+
+        .logo img {
+            height: 70px;
+        }
+
+        nav a {
+            text-decoration: none;
+            margin: 0 15px;
+            color: #1e3c72;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            color: #ff6600;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            margin-top: 70px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="NUEL BANK">
+    </div>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('services') }}">Services</a>
+
+        {% if 'user_email' in session %}
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </nav>
+</header>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+<footer>
+    <p>© 2025 NUEL BANK. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ cat login.html
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .login-box {
+        max-width: 400px;
+        margin: 50px auto;
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+    }
+
+    .login-box h2 {
+        text-align: center;
+        color: #1e3c72;
+        margin-bottom: 20px;
+    }
+
+    .login-box input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    .login-box button {
+        width: 100%;
+        padding: 12px;
+        background: #1e3c72;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .login-box button:hover {
+        background: #162f5f;
+    }
+
+    .error {
+        background: #ffd6d6;
+        color: red;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .links {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .links a {
+        text-decoration: none;
+        color: #1e3c72;
+        font-weight: bold;
+    }
+</style>
+
+
+<div class="login-box">
+
+    <h2>🔐 NUEL Bank Login</h2>
+
+    <!-- Flash messages here -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="error">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/login">
+        <input type="email" name="email" placeholder="Enter Email" required>
+        <input type="password" name="password" placeholder="Enter Password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="links">
+        <p>Don't have an account?</p>
+        <a href="/register">Register</a> |
+        <a href="/">Home</a>
+    </div>
+
+</div>
+
+{% endblock %}
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ cat profile.html
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .profile-box {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .profile-box h2 {
+        text-align: center;
+        color: #1e3c72;
+        margin-bottom: 20px;
+    }
+
+    .profile-field {
+        font-size: 18px;
+        padding: 8px 0;
+    }
+
+    .label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+
+    .btn-service {
+        background: #1e3c72;
+        color: white;
+    }
+
+    .btn-logout {
+        background: #d63031;
+        color: white;
+    }
+</style>
+
+<div class="profile-box">
+
+    <h2>👤 User Profile</h2>
+
+    <div class="profile-field"><span class="label">First Name:</span> {{ user.first_name }}</div>
+    <div class="profile-field"><span class="label">Last Name:</span> {{ user.last_name }}</div>
+    <div class="profile-field"><span class="label">Email:</span> {{ user.email }}</div>
+    <div class="profile-field"><span class="label">Mobile:</span> {{ user.mobile }}</div>
+    <div class="profile-field"><span class="label">Address:</span> {{ user.address }}</div>
+    <div class="profile-field"><span class="label">Status:</span> Active Customer</div>
+
+    <button class="btn btn-service" onclick="location.href='/services'">Services</button>
+    <button class="btn btn-logout" onclick="location.href='/logout'">Logout</button>
+
+</div>
+
+{% endblock %}
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ cat register.html
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .register-box {
+        max-width: 500px;
+        margin: 40px auto;
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+    }
+
+    .register-box h2 {
+        text-align: center;
+        color: #1e3c72;
+        margin-bottom: 20px;
+    }
+
+    .register-box input,
+    .register-box textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    .register-box button {
+        width: 100%;
+        padding: 12px;
+        background: #1e3c72;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+</style>
+
+<div class="register-box">
+
+    <h2>Create NUEL Bank Account</h2>
+
+    <form method="POST" action="/register">
+
+        <input type="text" name="first_name" placeholder="First Name" required>
+        <input type="text" name="last_name" placeholder="Last Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="text" name="mobile" placeholder="Mobile Number" required>
+
+        <textarea name="address" placeholder="Address" rows="3" required></textarea>
+
+        <input type="password" name="password" placeholder="Create Password" required>
+
+        <button type="submit">Register</button>
+
+    </form>
+</div>
+
+{% endblock %}
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ cat services.html
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Our Banking Services</h2>
+
+<ul>
+    <li>Savings Accounts</li>
+    <li>Current Accounts</li>
+    <li>Money Transfer</li>
+    <li>Loan Services</li>
+    <li>Bill Payments</li>
+</ul>
+
+{% endblock %}
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/templates$ cd ..
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ pwd
+/var/lib/jenkins/workspace/NUEL-BANK-APP/backend
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ ls -al
+total 48
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:21 ..
+-rw-rw-r-- 1 jenkins jenkins  155 Dec  3 04:24 Dockerfile
+-rw-rw-r-- 1 jenkins jenkins 3442 Dec  3 18:19 app.py
+-rw-r--r-- 1 jenkins jenkins  147 Dec  2 09:39 config.py
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 infra
+-rw-r--r-- 1 jenkins jenkins  373 Dec  2 09:39 models.py
+-rw-r--r-- 1 jenkins jenkins   14 Dec  2 10:42 requirements.txt
+-rw-r--r-- 1 jenkins jenkins 1691 Dec  2 09:39 routes.py
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 static
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  4 18:51 templates
+-rw-r--r-- 1 jenkins jenkins  660 Dec  2 09:39 utils.py
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cd static/
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$ pwd
+/var/lib/jenkins/workspace/NUEL-BANK-APP/backend/static
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$ ls -al
+total 20
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 ..
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 css
+drwxrwxr-x 2 jenkins jenkins 4096 Dec  4 18:45 images
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 js
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$ cd css/
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$ pwd
+/var/lib/jenkins/workspace/NUEL-BANK-APP/backend/static/css
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$ ls -al
+total 12
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 ..
+-rw-r--r-- 1 jenkins jenkins  641 Dec  2 09:39 styles.css
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$ cat styles.css
+body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;background:#f6f7fb}
+.topbar{background:#173f5f;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.topbar nav a{color:#fff;margin-left:12px;text-decoration:none}
+.container{max-width:980px;margin:24px auto;padding:16px}
+.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;gap:20px}
+.card .left{flex:1;padding:16px}
+.card .right{width:320px;padding:16px}
+input,button{display:block;width:100%;padding:8px;margin:8px 0}
+@media(max-width:700px){.card{flex-direction:column}.card .right{width:auto}}
+
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/css$ cd ..
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$ ls -al
+total 20
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 ..
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 css
+drwxrwxr-x 2 jenkins jenkins 4096 Dec  4 18:45 images
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 js
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$ cd js/
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$ ls -al
+total 12
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 ..
+-rw-r--r-- 1 jenkins jenkins  941 Dec  2 09:39 main.js
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$ cat main.js
+document.addEventListener('DOMContentLoaded', ()=>{
+const loginForm = document.getElementById('loginForm')
+const registerForm = document.getElementById('registerForm')
+
+
+if(loginForm){
+loginForm.addEventListener('submit', async (e)=>{
+e.preventDefault();
+const form = new FormData(loginForm)
+const body = Object.fromEntries(form.entries())
+const res = await fetch('/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)})
+if(res.ok) window.location.href = '/profile'
+else alert('Login failed')
+})
+}
+
+
+if(registerForm){
+registerForm.addEventListener('submit', async (e)=>{
+e.preventDefault();
+const form = new FormData(registerForm)
+const body = Object.fromEntries(form.entries())
+const res = await fetch('/api/register', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)})
+if(res.ok) window.location.href = '/profile'
+else alert('Register failed')
+})
+}
+})
+
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static/js$ cd ../
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/static$ cd ..
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ ls -al
+total 48
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:21 ..
+-rw-rw-r-- 1 jenkins jenkins  155 Dec  3 04:24 Dockerfile
+-rw-rw-r-- 1 jenkins jenkins 3442 Dec  3 18:19 app.py
+-rw-r--r-- 1 jenkins jenkins  147 Dec  2 09:39 config.py
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 infra
+-rw-r--r-- 1 jenkins jenkins  373 Dec  2 09:39 models.py
+-rw-r--r-- 1 jenkins jenkins   14 Dec  2 10:42 requirements.txt
+-rw-r--r-- 1 jenkins jenkins 1691 Dec  2 09:39 routes.py
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  4 18:06 static
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  4 18:51 templates
+-rw-r--r-- 1 jenkins jenkins  660 Dec  2 09:39 utils.py
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend$ cd infra/
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/infra$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/infra$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/infra$ ls -al
+total 12
+drwxr-xr-x 2 jenkins jenkins 4096 Dec  2 09:39 .
+drwxr-xr-x 5 jenkins jenkins 4096 Dec  3 18:19 ..
+-rw-r--r-- 1 jenkins jenkins    9 Dec  2 09:39 mongo-init.js
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/infra$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/infra$ cat mongo-init.js
+db = db
+
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/infra$
+jenkins@ip-172-31-84-79:~/workspace/NUEL-BANK-APP/backend/infra$
+
